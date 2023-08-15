@@ -100,7 +100,11 @@ class MockServerLibrary(object):
                 logger.debug("Add header - header: {}".format(header))
 
         if body_type == 'JSON' and body:
-            rsp['body'] = json.dumps(body)
+            # If [] is passed as a body, this will not work, so this will fix this.
+            if str(body) == "[]":
+                rsp['body'] = "[]"
+            else:
+                rsp['body'] = json.dumps(body)
 
         return rsp
 

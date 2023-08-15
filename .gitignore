@@ -2,6 +2,9 @@
 *.swp
 *.log
 .cache/
+.idea/
+build/
+src/robotframework_mockserverlibrary.egg-info/
 logs
 dist
 MANIFEST

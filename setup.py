@@ -1,16 +1,21 @@
+import pathlib
 from distutils.core import setup
 
 exec(open('./src/MockServerLibrary/version.py').read())
 
-setup(name='robotframework-mockserver',
+HERE = pathlib.Path(__file__).parent
+README = (HERE / "README.md").read_text()
+
+setup(name='robotframework-mockserverlibrary',
       packages=['MockServerLibrary'],
       package_dir={'': 'src'},
       version=VERSION,
       description='Robot framework library for MockServer',
-      author='ETSI CTI',
-      author_email='cti_support@etsi.org',
-      url='https://github.com/etsi-cti-admin/robotframework-mockserver',
-      download_url='https://github.com/etsi-cti-admin/robotframework-mockserver/archive/{}.tar.gz'.format(
-          VERSION),
-      keywords='testing robotframework mockserver',
+      long_description=README,
+      author="Frank van der Kuur",
+      author_email='frank.vanderkuur@bqa.nl',
+      url="https://github.com/frankvanderkuur/robotframework-mockserverlibrary",
+      keywords='testing robotframework mockserver mock stub',
+      include_package_data=True,
+      install_requires=["robotframework-requests", "robotframework-jsonlibrary"],
       classifiers=[])
