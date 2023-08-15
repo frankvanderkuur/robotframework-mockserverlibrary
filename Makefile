@@ -46,7 +46,7 @@ version/tag: ## Tag HEAD with new version tag
 
 .PHONY: docs
 docs: ## Generate library docs
-	python -m robot.libdoc src/MockServerLibrary ../etsi-cti-admin.github.io/docs/robotframework-mockserver-$(VERSION).html
-	ln -sf robotframework-mockserver-$(VERSION).html ../etsi-cti-admin.github.io/docs/robotframework-mockserver.html
-	git -C ../etsi-cti-admin.github.io add .
-	git -C ../etsi-cti-admin.github.io commit -m "robotframework-mockserver-$(VERSION)"
+	python3 -m robot.libdoc src/MockServerLibrary ../frankvanderkuur.github.io/docs/robotframework-mockserverlibrary-$(VERSION).html
+	ln -sf robotframework-mockserverlibrary-$(VERSION).html ../frankvanderkuur.github.io/docs/robotframework-mockserverlibrary.html
+	git -C ../frankvanderkuur.github.io add .
+	git -C ../frankvanderkuur.github.io commit -m "robotframework-mockserver-$(VERSION)"

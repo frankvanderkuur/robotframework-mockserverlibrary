@@ -13,19 +13,19 @@ class MockServerLibrary(object):
 
     The purpose of this library is to provide a keyword-based API
     towards MockServer to be used in robot tests. The project is hosted in
-    [https://github.com/etsi-cti-admin/robotframework-mockserver|GitHub],
+    [https://github.com/frankvanderkuur/robotframework-mockserverlibrary|GitHub],
     and packages are released to PyPI.
 
     = Installation =
 
-    | pip install robotframework-mockserver
+    | pip install robotframework-mockserverlibrary
 
     = Importing =
 
     The library does not currently support any import arguments, so use the
     following setting to take the library into use:
 
-    | Library | MockServerLibrary |
+    | Library | MockServerLibrary p|
 
     """
 
@@ -145,21 +145,25 @@ class MockServerLibrary(object):
 
         self.create_mock_expectation_with_data(data)
 
-    def create_mock_expectation(self, request, response, count=1, unlimited=True):
+    def create_mock_expectation(self, request, response, id="", count=1, unlimited=True):
         """Creates a mock expectation to be used by mockserver.
 
         `request` is a mock request matcher in a dictionary format.
 
         `response` is a mock response in a dictionary format.
 
-        `count` is the number of expected requests
+        `id` is a self-appointed unique identifier for the expectation.
+
+        `count` is the number of expected requests.
 
         `unlimited` is a boolean value which, if enabled, allows unspecified number of
-        requests to reply to
+        requests to reply to.
         """
         data = {}
         data['httpRequest'] = request
         data['httpResponse'] = response
+        if id != "":
+            data['id'] = id
         data['times'] = {'remainingTimes': int(count), 'unlimited': unlimited}
 
         self.create_mock_expectation_with_data(data)
@@ -261,6 +265,27 @@ class MockServerLibrary(object):
         body['path'] = path
         data = json.dumps(body)
         self._send_request("/clear", data)
+
+    def clear_requests_by_id(self, id, type="all"):
+        """Clears expectations and recorded requests that match the given id.
+
+        `id` is the id of the expectation you wish to clear
+
+        `type` specifies the type of information to clear (all, log or expectation)
+        """
+        possible_types = ['all', 'log', 'expectation']
+
+        body = {}
+        body['id'] = id
+        data = json.dumps(body)
+        if type.lower() not in possible_types:
+            raise RuntimeError("Type must be one of these values: all, log or expectation")
+
+        try:
+            self._send_request("/clear?type=" + type.lower(), data)
+        except Exception as e:
+            message="Clearing expectation with id " + id + " was unseccesfull!"
+            raise Warning(message)
 
     def reset_all_requests(self):
         """Clears all expectations and received requests from the mockserver.
