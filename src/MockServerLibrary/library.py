@@ -86,7 +86,8 @@ class MockServerLibrary(object):
 
         `body_type` is the type of the response body, e.g. JSON
 
-        `body` is a dictonary of JSON attribute(s) to be added to the response body
+        `body` is either a string that contains the full body or a dictonary of JSON attribute(s) to be added to the
+        response body
         """
         rsp = {}
         rsp['statusCode'] = int(status_code)
@@ -100,11 +101,11 @@ class MockServerLibrary(object):
                 logger.debug("Add header - header: {}".format(header))
 
         if body_type == 'JSON' and body:
-            # If [] is passed as a body, this will not work, so this will fix this.
-            if str(body) == "[]":
-                rsp['body'] = "[]"
-            else:
+            # Check if body is a dict or a plain file and process accordingly
+            if isinstance(body, dict):
                 rsp['body'] = json.dumps(body)
+            else:
+                rsp['body'] = body
 
         return rsp
 

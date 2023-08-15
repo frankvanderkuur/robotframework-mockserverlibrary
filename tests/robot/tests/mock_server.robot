@@ -9,9 +9,10 @@ Test Teardown  Reset Mock Server
 
 
 *** Variables ***
-${MOCK_URL}
+${MOCK_URL}  https://mockserver.ipaas.vanwijnen.nl
 ${ENDPOINT}  /endpoint
 &{BODY}  var1=value1  var2=value2
+${BODY_STRING}  {"var1": "value1", "var2": "value2"}
 &{HEADERS}  Content-type=application/json  Cache-Control=max-age\=3600
 &{INPUT_HEADERS}  Content-type=application/json  Cache-Control=max-age\=3600  Length=0
 ${MOCK_REQ}  {"method": "GET", "path": "${ENDPOINT}"}
@@ -46,9 +47,15 @@ Failure On GET With Mismatched Endpoint
     Create Mock Expectation  ${req}  ${rsp}
     Send GET Expect Failure  endpoint=/mismatched
 
-Success On Expected GET With Response Body
+Success On Expected GET With Response Body With JSON Dict as Response Body input
     &{req}=  Create Mock Request Matcher  GET  ${ENDPOINT}
     &{rsp}=  Create Mock Response  status_code=200  headers=${HEADERS}  body=${BODY}
+    Create Mock Expectation  ${req}  ${rsp}
+    Send GET Expect Success  ${ENDPOINT}  response_headers=${HEADERS}  response_body=${BODY}
+
+Success On Expected GET With Response Body With String as Response Body input
+    &{req}=  Create Mock Request Matcher  GET  ${ENDPOINT}
+    &{rsp}=  Create Mock Response  status_code=200  headers=${HEADERS}  body=${BODY_STRING}
     Create Mock Expectation  ${req}  ${rsp}
     Send GET Expect Success  ${ENDPOINT}  response_headers=${HEADERS}  response_body=${BODY}
 
