@@ -37,7 +37,7 @@ clean: ## Clean dist
 
 .PHONY: release
 release: clean ## Release package to PyPI
-	python setup.py sdist
+	python3 setup.py sdist
 	twine upload dist/robotframework-mockserver-$(VERSION).tar.gz
 
 .PHONY: version/tag

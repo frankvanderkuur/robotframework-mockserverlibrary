@@ -25,7 +25,7 @@ class MockServerLibrary(object):
     The library does not currently support any import arguments, so use the
     following setting to take the library into use:
 
-    | Library | MockServerLibrary p|
+    | Library | MockServerLibrary |
 
     """
 
@@ -62,15 +62,16 @@ class MockServerLibrary(object):
         req['method'] = method
         req['path'] = path
 
+        if isinstance(body, str):
+            json_string = body
+        else:
+            json_string = json.dumps(body)
+
         if body_type == 'JSON' and body:
             match_type = 'STRICT' if exact else 'ONLY_MATCHING_FIELDS'
-            req['body'] = {'type': body_type, 'json': json.dumps(body), 'matchType': match_type}
+            req['body'] = {'type': body_type, 'json': json_string, 'matchType': match_type}
 
         if body_type == 'JSON_SCHEMA' and body:
-            if isinstance(body, str):
-                json_string = body
-            else:
-                json_string = json.dumps(body)
             req['body'] = {'type': body_type, 'jsonSchema': json_string}
 
         return req
@@ -209,6 +210,24 @@ class MockServerLibrary(object):
         """
         data = {}
         data['httpRequest'] = request
+        if exact:
+            data['times'] = {'atLeast': int(count), 'atMost': int(count)}
+        else:
+            data['times'] = {'atLeast': int(count)}
+
+        self.verify_mock_expectation_with_data(data)
+
+    def verify_mock_expectation_by_id(self, id, count=1, exact=True):
+        """Verifies that the mockserver has received a specific request.
+
+        `id` is a self-appointed unique identifier for the expectation when creating the expectation.
+
+        `count` is the minimum expected number of requests
+
+        `exact` specifies whether the expected count should match the actual received count
+        """
+        data = {}
+        data['expectationId'] = {'id': id}
         if exact:
             data['times'] = {'atLeast': int(count), 'atMost': int(count)}
         else:
