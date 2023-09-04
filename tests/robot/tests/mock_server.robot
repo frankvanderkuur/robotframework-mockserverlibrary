@@ -9,7 +9,7 @@ Test Teardown  Reset Mock Server
 
 
 *** Variables ***
-${MOCK_URL}  https://mockserver.ipaas.vanwijnen.nl
+${MOCK_URL}
 ${ENDPOINT}  /endpoint
 &{BODY}  var1=value1  var2=value2
 ${BODY_STRING}  {"var1": "value1", "var2": "value2"}
