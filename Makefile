@@ -56,3 +56,4 @@ docs: ## Generate library docs
 	ln -sf robotframework-mockserverlibrary-$(VERSION).html ../frankvanderkuur.github.io/docs/robotframework-mockserverlibrary.html
 	git -C ../frankvanderkuur.github.io add .
 	git -C ../frankvanderkuur.github.io commit -m "robotframework-mockserver-$(VERSION)"
+	git -C ../frankvanderkuur.github.io push
