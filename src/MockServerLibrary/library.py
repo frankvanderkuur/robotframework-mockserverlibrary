@@ -110,29 +110,55 @@ class MockServerLibrary(object):
 
         return rsp
 
-    def create_mock_http_forward(self, path, delay=1, unit='SECONDS'):
+    def create_mock_http_forward(self, rewrite_path="", forward_host="", forward_port="",
+                                 forward_scheme="", delay=0, unit='SECONDS'):
         """Creates a mock http override forward to be used by mockserver.
 
         Returns the http forward in a dictionary format.
 
-        `path` is the new url where to forward the request
+        `rewrite_path` is the new path you want to use for the forwarded request
 
-        `delay` is the delay of the forward action
+        `forward_host` is the new hostname to where you want to forward the request
+
+        `forward_port` the different port you want to forward the request to
+
+        `forward_scheme` the different schema you want to forward the request to (e.g. HTTP or HTTPS)
+
+        `delay` is the delay of the forward action (default 0)
 
         `unit` is the unit of the delay time (default "SECONDS")
         """
         fwd = {}
-        fwd['httpRequest'] = {'path': path}
-        fwd['delay'] = {'timeUnit': unit, 'value': delay}
+        fwd['httpRequest'] = {}
+        if rewrite_path:
+            fwd['httpRequest']['path'] = rewrite_path
+
+        forward_headers = {}
+        if forward_host:
+            forward_headers["Host"] = forward_host
+
+        if forward_port:
+            forward_headers["Port"] = forward_port
+
+        if forward_scheme:
+            forward_headers["Scheme"] = forward_scheme
+
+        if forward_headers:
+            fwd['httpRequest']['headers'] = forward_headers
+
+        if delay > 0:
+            fwd['delay'] = {'timeUnit': unit, 'value': delay}
 
         return fwd
 
-    def create_mock_expectation_with_http_forward(self, request, forward, count=1, unlimited=True):
+    def create_mock_expectation_with_http_forward(self, request, forward, id="", count=1, unlimited=True):
         """Creates a mock expectation with request and forward action to be used by mockserver.
 
         `request` is a mock request matcher in a dictionary format.
 
         `forward` is a mock forward in a dictionary format.
+
+        `id` is a self-appointed unique identifier for the expectation.
 
         `count` is the number of expected requests
 
@@ -142,6 +168,8 @@ class MockServerLibrary(object):
         data = {}
         data['httpRequest'] = request
         data['httpOverrideForwardedRequest'] = forward
+        if id != "":
+            data['id'] = id
         data['times'] = {'remainingTimes': int(count), 'unlimited': unlimited}
 
         self.create_mock_expectation_with_data(data)

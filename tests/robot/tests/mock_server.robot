@@ -5,11 +5,11 @@ Library  RequestsLibrary
 Library  MockServerLibrary
 Library    JSONLibrary
 Suite Setup  Create Sessions
-Test Teardown  Reset Mock Server
+#Test Teardown  Reset Mock Server
 
 
 *** Variables ***
-${MOCK_URL}
+${MOCK_URL}  http://localhost:1080
 ${ENDPOINT}  /endpoint
 &{BODY}  var1=value1  var2=value2
 ${BODY_STRING}  {"var1": "value1", "var2": "value2"}
@@ -256,6 +256,13 @@ Success On Retrieve Expectations
     Should Contain  ${rsp_str}  GET
     Should Contain  ${rsp_str}  ${ENDPOINT}
 
+Forward to host with path rewrite
+    &{req}=  Create Mock Request Matcher  GET  ${ENDPOINT}
+    ${fwd}=  Create Mock Http Forward  /beea74ee-bcbe-441b-b2cb-4a536275882b/${ENDPOINT}  forward_host=webhook.site
+    ...  forward_port=443  forward_scheme=HTTPS
+    Create Mock Expectation With Http Forward    ${req}    ${fwd}  id=forward1
+    Send GET Expect Success  ${ENDPOINT}
+
 *** Keywords ***
 Create Sessions
     Create Session  server  ${MOCK_URL}
@@ -267,7 +274,7 @@ Reset Mock Server
 
 Send GET Expect Success
     [Arguments]  ${endpoint}=${ENDPOINT}  ${response_headers}=${None}  ${response_body}=${None}
-    ${rsp}=  Get Request  server  ${endpoint}
+    ${rsp}=  GET On Session      server  ${endpoint}
     Should Be Equal As Strings  ${rsp.status_code}  200
     Run Keyword If   ${response_headers != None}  Verify Response Headers  ${response_headers}  ${rsp.headers}
     Run Keyword If   ${response_body != None}  Verify Response Body  ${response_body}  ${rsp.json()}
