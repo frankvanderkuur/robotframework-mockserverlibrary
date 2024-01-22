@@ -40,7 +40,6 @@ testrelease: clean ## Release package to Test PyPI
 	python3 setup.py sdist
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/robotframework-mockserverlibrary-$(VERSION).tar.gz
 
-
 .PHONY: release
 release: clean ## Release package to PyPI
 	python3 setup.py sdist

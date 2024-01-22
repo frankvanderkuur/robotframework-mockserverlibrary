@@ -151,7 +151,7 @@ class MockServerLibrary(object):
 
         return fwd
 
-    def create_mock_expectation_with_http_forward(self, request, forward, id="", count=1, unlimited=True):
+    def create_mock_expectation_with_http_forward(self, request, forward, id="", count=0):
         """Creates a mock expectation with request and forward action to be used by mockserver.
 
         `request` is a mock request matcher in a dictionary format.
@@ -160,21 +160,21 @@ class MockServerLibrary(object):
 
         `id` is a self-appointed unique identifier for the expectation.
 
-        `count` is the number of expected requests
-
-        `unlimited` is a boolean value which, if enabled, allows unspecified number of
-        requests to reply to
+        `count` the number of requests mockserver will serve this expectation. Unlimited when set to 0 (default)
         """
         data = {}
         data['httpRequest'] = request
         data['httpOverrideForwardedRequest'] = forward
         if id != "":
             data['id'] = id
-        data['times'] = {'remainingTimes': int(count), 'unlimited': unlimited}
+        if count > 0:
+            data['times'] = {'remainingTimes': int(count), 'unlimited': False}
+        else:
+            data['times'] = {'unlimited': True}
 
         self.create_mock_expectation_with_data(data)
 
-    def create_mock_expectation(self, request, response, id="", count=1, unlimited=True):
+    def create_mock_expectation(self, request, response, id="", count=0):
         """Creates a mock expectation to be used by mockserver.
 
         `request` is a mock request matcher in a dictionary format.
@@ -183,18 +183,17 @@ class MockServerLibrary(object):
 
         `id` is a self-appointed unique identifier for the expectation.
 
-        `count` is the number of expected requests.
-
-        `unlimited` is a boolean value which, if enabled, allows unspecified number of
-        requests to reply to.
+        `count` the number of requests mockserver will serve this expectation. Unlimited when set to 0 (default)
         """
         data = {}
         data['httpRequest'] = request
         data['httpResponse'] = response
         if id != "":
             data['id'] = id
-        data['times'] = {'remainingTimes': int(count), 'unlimited': unlimited}
-
+        if count > 0:
+            data['times'] = {'remainingTimes': int(count), 'unlimited': False}
+        else:
+            data['times'] = {'unlimited': True}
         self.create_mock_expectation_with_data(data)
 
     def create_default_mock_expectation(self, method, path, response_code=200,
