@@ -76,7 +76,7 @@ class MockServerLibrary(object):
 
         return req
 
-    def create_mock_response(self, status_code, headers=None, body_type='JSON', body=None):
+    def create_mock_response(self, status_code, headers=None, body_type='JSON', body=None, delay=0, unit='SECONDS'):
         """Creates a mock response to be used by mockserver.
 
         Returns the response in a dictionary format.
@@ -89,6 +89,10 @@ class MockServerLibrary(object):
 
         `body` is either a string that contains the full body or a dictonary of JSON attribute(s) to be added to the
         response body
+
+        `delay` is the delay that is used for the response 
+
+        `unit` is the unit of the delay time (default "SECONDS")
         """
         rsp = {}
         rsp['statusCode'] = int(status_code)
@@ -107,6 +111,9 @@ class MockServerLibrary(object):
                 rsp['body'] = json.dumps(body)
             else:
                 rsp['body'] = body
+                
+        if delay > 0:
+            rsp['delay'] = {'timeUnit': unit, 'value': delay}
 
         return rsp
 
@@ -174,7 +181,7 @@ class MockServerLibrary(object):
 
         self.create_mock_expectation_with_data(data)
 
-    def create_mock_expectation(self, request, response, id="", count=0):
+    def create_mock_expectation(self, request, response, id="", count=0, priority=0):
         """Creates a mock expectation to be used by mockserver.
 
         `request` is a mock request matcher in a dictionary format.
@@ -184,6 +191,8 @@ class MockServerLibrary(object):
         `id` is a self-appointed unique identifier for the expectation.
 
         `count` the number of requests mockserver will serve this expectation. Unlimited when set to 0 (default)
+
+        `priority` matching is ordered by priority (highest first) then creation (earliest first)
         """
         data = {}
         data['httpRequest'] = request
@@ -194,6 +203,8 @@ class MockServerLibrary(object):
             data['times'] = {'remainingTimes': int(count), 'unlimited': False}
         else:
             data['times'] = {'unlimited': True}
+        if priority > 0:
+            data['priority'] = priority
         self.create_mock_expectation_with_data(data)
 
     def create_default_mock_expectation(self, method, path, response_code=200,
