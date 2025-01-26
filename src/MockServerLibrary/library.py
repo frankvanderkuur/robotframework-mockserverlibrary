@@ -42,7 +42,7 @@ class MockServerLibrary(object):
         self.base_url = base_url
         self.session = requests.Session()
 
-    def create_mock_request_matcher(self, method, path, body_type='JSON', body=None, exact=True):
+    def create_mock_request_matcher(self, method, path, body_type='JSON', body=None, exact=True, queryparams=None):
         """Creates a mock request matcher to be used by mockserver.
 
         Returns the request matcher in a dictionary format.
@@ -57,10 +57,16 @@ class MockServerLibrary(object):
 
         `exact` is a boolean value which specifies whether the body should match fully (=true),
         or if only specified fields should match (=false)
+        
+        `queryparams` expects a dictionary or queryparameters that should match
+
         """
         req = {}
         req['method'] = method
         req['path'] = path
+
+        if(queryparams):
+            req['queryStringParameters'] = queryparams
 
         if isinstance(body, str):
             json_string = body
