@@ -10,3 +10,4 @@ dist
 MANIFEST
 !.gitkeep
 .DS_Store
+.vscode
