@@ -38,12 +38,12 @@ clean: ## Clean dist
 .PHONY: testrelease
 testrelease: clean ## Release package to Test PyPI
 	python3 setup.py sdist
-	twine upload --repository-url https://test.pypi.org/legacy/ dist/robotframework-mockserverlibrary-$(VERSION).tar.gz
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/robotframework_mockserverlibrary-$(VERSION).tar.gz
 
 .PHONY: release
 release: clean ## Release package to PyPI
 	python3 setup.py sdist
-	twine upload dist/robotframework-mockserverlibrary-$(VERSION).tar.gz
+	twine upload dist/robotframework_mockserverlibrary-$(VERSION).tar.gz
 
 .PHONY: version/tag
 version/tag: ## Tag HEAD with new version tag
