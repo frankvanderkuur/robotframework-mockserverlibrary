@@ -6,7 +6,7 @@ exec(open('./src/MockServerLibrary/version.py').read())
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-setup(name='robotframework-mockserverlibrary',
+setup(name='robotframework_mockserverlibrary',
       packages=['MockServerLibrary'],
       package_dir={'': 'src'},
       version=VERSION,
