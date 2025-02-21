@@ -124,7 +124,8 @@ class MockServerLibrary(object):
         return rsp
 
     def create_mock_http_forward(self, rewrite_path="", forward_host="", forward_port="",
-                                 forward_scheme="", delay=0, unit='SECONDS'):
+                                 forward_scheme="", socket_host="", socket_port="",
+                                 socket_scheme="", delay=0, unit='SECONDS'):
         """Creates a mock http override forward to be used by mockserver.
 
         Returns the http forward in a dictionary format.
@@ -136,6 +137,12 @@ class MockServerLibrary(object):
         `forward_port` the different port you want to forward the request to
 
         `forward_scheme` the different schema you want to forward the request to (e.g. HTTP or HTTPS)
+
+        `socket_host` is the new hostname to where you want to forward the request using a socket
+
+        `socket_port` the different port you want to forward the request to  using a socket
+
+        `socket_scheme` the different schema you want to forward the request to (e.g. HTTP or HTTPS)  using a socket
 
         `delay` is the delay of the forward action (default 0)
 
@@ -158,6 +165,19 @@ class MockServerLibrary(object):
 
         if forward_headers:
             fwd['httpRequest']['headers'] = forward_headers
+
+        if forward_socket:
+            forward_socket = {}
+            if forward_host:
+                forward_socket["Host"] = socket_host
+
+            if forward_port:
+                forward_socket["Port"] = socket_port
+
+            if forward_scheme:
+                forward_socket["Scheme"] = socket_scheme
+
+            fwd['httpRequest']['socketAddress'] = forward_socket
 
         if delay > 0:
             fwd['delay'] = {'timeUnit': unit, 'value': delay}
