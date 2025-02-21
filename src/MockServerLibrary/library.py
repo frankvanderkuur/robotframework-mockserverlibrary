@@ -166,16 +166,16 @@ class MockServerLibrary(object):
         if forward_headers:
             fwd['httpRequest']['headers'] = forward_headers
 
-        if forward_socket:
+        if socket_host:
             forward_socket = {}
             if forward_host:
-                forward_socket["Host"] = socket_host
+                forward_socket["host"] = socket_host
 
-            if forward_port:
-                forward_socket["Port"] = socket_port
+            if socket_port:
+                forward_socket["port"] = int(socket_port)
 
-            if forward_scheme:
-                forward_socket["Scheme"] = socket_scheme
+            if socket_scheme:
+                forward_socket["scheme"] = socket_scheme
 
             fwd['httpRequest']['socketAddress'] = forward_socket
 
